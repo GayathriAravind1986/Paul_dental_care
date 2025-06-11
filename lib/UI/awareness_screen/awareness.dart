@@ -104,14 +104,14 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
                   child: Image.asset(
                     'assets/image/awarenessimage.jpg',
                     height: height * .28,
-                    width: double.infinity,
                     fit: BoxFit.cover,
+                    width: width * 0.9,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         height: height * .28,
-                        color: Colors.grey[300],
+                        color: ClipRRectContainer,
                         child: const Center(
-                          child: Text('Image not found', style: TextStyle(color: Colors.black54)),
+                          child: Text('Image not found', style: TextStyle(color: ClipRRectContainertext)),
                         ),
                       );
                     },
@@ -142,13 +142,15 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
       );
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
-              (route) => false,
-        );
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                (route) => false,
+          );
+        }
       },
       child: Scaffold(
         backgroundColor: scaffoldBackgroundColorawareness,
@@ -158,12 +160,12 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
             children: [
               Image.asset(Images.logo1, height: 50, width: 50),
               const SizedBox(width: 10),
-               Text(
+              Text(
                 'PAUL DENTAL CARE',
                 style:MyTextStyle.f20(
                     whiteColor
                 ),
-               ),
+              ),
             ],
           ),
         ),
@@ -177,7 +179,6 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
                 errorMessage = (errorList != null && errorList.isNotEmpty)
                     ? errorList[0].message ?? "Something went wrong"
                     : "Something went wrong";
-
                 showToast(errorMessage!, context, color: false);
                 setState(() => awarenessLoad = false);
               } else if (current.success == true) {

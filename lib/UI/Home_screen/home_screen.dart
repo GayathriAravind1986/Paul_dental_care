@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:simple/Api/submitreview.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +15,7 @@ import 'package:simple/Reusable/text_styles.dart';
 import 'package:simple/UI/Home_screen/testimonial.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:simple/ModelClass/Home/getHomeModel.dart';
-import 'package:simple/Api/apiprovider.dart';
+import 'package:simple/Api/apiProvider.dart';
 
 class HomeScreen extends StatelessWidget {
   final bool isDarkMode;
@@ -23,17 +25,14 @@ class HomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => ContactDentalBloc(),
       child: HomeScreenView(
-        isDarkMode: isDarkMode,
       ),
     );
   }
 }
 
 class HomeScreenView extends StatefulWidget {
-  final bool isDarkMode;
   const HomeScreenView({
     super.key,
-    required this.isDarkMode,
   });
 
   @override
@@ -45,49 +44,16 @@ class HomeScreenViewState extends State<HomeScreenView> {
   bool homeLoad = false;
   String? errorMessage;
   List<String> currentCarouselImages = [];
-  final PageController _carouselPageController = PageController(initialPage: 0);
-  final PageController _newsEventsPageController =
-  PageController(initialPage: 0);
-  final PageController _smallTestimonialsPageController =
-  PageController(initialPage: 0);
-  final PageController _largeTestimonialPageController =
-  PageController(initialPage: 0);
+  final PageController _carouselPageController = PageController();
+  final PageController _testimonialsPageController = PageController(); // New controller for testimonials
 
   Timer? _carouselTimer;
-  Timer? _newsEventsTimer;
-  Timer? _smallTestimonialsTimer;
-  Timer? _largeTestimonialTimer;
+  Timer? _testimonialsTimer;
+  bool _hasStartedAutoScrolls = false;
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _reviewController = TextEditingController();
   int _selectedStars = 5;
-  final List<String> carouselImages = [
-    Images.carousel1,
-    Images.carousel2,
-    Images.carousel3,
-  ];
 
-  final List<Testimonial> testimonials = [
-    Testimonial(
-      clientName: 'Sonia',
-      stars: 3,
-      shortQuote: '',
-      longReview: 'I was struggling with missing teeth for years, which affected my confidence and ability to eat comfortably. Thanks to the expert care at Paul Dental Care, I got my teeth attached seamlessly. The procedure was smooth, painless, and the results are amazing! Now, I can smile and eat without any worries. Truly life-changing dental care!',
-    ),
-    Testimonial(
-      clientName: 'Selvam',
-      stars: 5,
-      shortQuote: '"Best dental clinic"',
-      longReview:
-      'Best dental clinic. The staff is very friendly and the doctors are highly skilled. I highly recommend Paul Dental Care for all your dental needs.',
-    ),
-    Testimonial(
-      clientName: 'இராஜகுமார்', // Rajakumar
-      stars: 4,
-      shortQuote: '"Doctor interaction and quality of care are good"',
-      longReview:
-      'Doctor interaction and quality of care are good. The clinic is clean and well-maintained. I had a pleasant experience during my visit.',
-    ),
-  ];
 
   @override
   void initState() {
@@ -96,66 +62,52 @@ class HomeScreenViewState extends State<HomeScreenView> {
     homeLoad = true;
   }
 
-  void _startCarouselTimer() {
-    _carouselTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (_carouselPageController.hasClients) {
-        int nextPage = _carouselPageController.page!.toInt() + 1;
-        if (nextPage >= carouselImages.length) {
-          nextPage = 0;
+  void _startSlideshowAutoScroll() {
+    _carouselTimer?.cancel();
+    final slideshowLength = getHomeModel.data?.slideshow?.length ?? 0;
+    if (slideshowLength > 0) {
+      _carouselTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (_carouselPageController.hasClients) {
+          int nextPage = _carouselPageController.page!.round() + 1;
+          if (nextPage >= slideshowLength) {
+            nextPage = 0;
+          }
+          _carouselPageController.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
         }
-        _carouselPageController.animateToPage(
-          nextPage,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeIn,
-        );
-      }
-    });
+      });
+    }
   }
 
-  void _startSmallTestimonialsTimer() {
-    _smallTestimonialsTimer =
-        Timer.periodic(const Duration(seconds: 6), (timer) {
-          if (_smallTestimonialsPageController.hasClients) {
-            int nextPage = _smallTestimonialsPageController.page!.toInt() + 1;
-            if (nextPage >= testimonials.length) {
-              nextPage = 0; // Loop back to the first page
-            }
-            _smallTestimonialsPageController.animateToPage(
-              nextPage,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeIn,
-            );
+  void _startTestimonialsAutoScroll() {
+    _testimonialsTimer?.cancel();
+    final reviewsLength = getHomeModel.data?.reviews?.length ?? 0;
+    if (reviewsLength > 0) {
+      _testimonialsTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (_testimonialsPageController.hasClients) {
+          int nextPage = _testimonialsPageController.page!.round() + 1;
+          if (nextPage >= reviewsLength) {
+            nextPage = 0;
           }
-        });
-  }
-
-  void _startLargeTestimonialTimer() {
-    _largeTestimonialTimer =
-        Timer.periodic(const Duration(seconds: 8), (timer) {
-          if (_largeTestimonialPageController.hasClients) {
-            int nextPage = _largeTestimonialPageController.page!.toInt() + 1;
-            if (nextPage >= testimonials.length) {
-              nextPage = 0;
-            }
-            _largeTestimonialPageController.animateToPage(
-              nextPage,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeIn,
-            );
-          }
-        });
+          _testimonialsPageController.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
   }
 
   @override
   void dispose() {
-    _carouselPageController.dispose();
-    _newsEventsPageController.dispose();
-    _smallTestimonialsPageController.dispose();
-    _largeTestimonialPageController.dispose();
     _carouselTimer?.cancel();
-    _newsEventsTimer?.cancel();
-    _smallTestimonialsTimer?.cancel();
-    _largeTestimonialTimer?.cancel();
+    _testimonialsTimer?.cancel();
+    _carouselPageController.dispose();
+    _testimonialsPageController.dispose();
     _fullNameController.dispose();
     _reviewController.dispose();
     super.dispose();
@@ -194,8 +146,7 @@ class HomeScreenViewState extends State<HomeScreenView> {
         ),
       );
     }
-
-    return PopScope(
+ return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
         if (didPop) {
@@ -222,71 +173,74 @@ class HomeScreenViewState extends State<HomeScreenView> {
         if (shouldExit == true) {
           SystemNavigator.pop();
         }
-      },
-      child: Scaffold(
-          backgroundColor: scaffoldBackgroundColor,
-          appBar: AppBar(
-            backgroundColor: appBarBackgroundColor,
-            title: Row(
-              children: [
-                Image.asset(Images.logo1, height: 50, width: 50),
-                const SizedBox(width: 10),
-                Text(
-                  'PAUL DENTAL CARE',
-                  style:MyTextStyle.f20(
+       },
+        child: Scaffold(
+            backgroundColor: scaffoldBackgroundColor,
+            appBar: AppBar(
+              backgroundColor: appBarBackgroundColor,
+              title: Row(
+                children: [
+                  Image.asset(Images.logo1, height: 50, width: 50),
+                  const SizedBox(width: 10),
+                  Text(
+                    'PAUL DENTAL CARE',
+                    style:MyTextStyle.f20(
                       whiteColor,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          body: BlocBuilder<ContactDentalBloc, dynamic>(
-            buildWhen: ((previous, current) {
-              debugPrint("current:$current");
-              if (current is GetHomeModel) {
-                getHomeModel = current;
-                if (current.errorResponse != null) {
-                  if (current.errorResponse!.errors != null &&
-                      current.errorResponse!.errors!.isNotEmpty) {
-                    errorMessage = current.errorResponse!.errors![0].message ??
-                        "Something went wrong";
-                  } else {
-                    errorMessage = "Something went wrong";
-                  }
-                  showToast("$errorMessage", context, color: false);
-                  setState(() {
-                    homeLoad = false;
-                  });
-                } else if (getHomeModel.success == true) {
-                  if (getHomeModel.data?.status == true) {
+            body: BlocBuilder<ContactDentalBloc, dynamic>(
+              buildWhen: ((previous, current) {
+                debugPrint("current:$current");
+                if (current is GetHomeModel) {
+                  getHomeModel = current;
+                  if (current.errorResponse != null) {
+                    if (current.errorResponse!.errors != null &&
+                        current.errorResponse!.errors!.isNotEmpty) {
+                      errorMessage = current.errorResponse!.errors![0].message ??
+                          "Something went wrong";
+                    } else {
+                      errorMessage = "Something went wrong";
+                    }
+                    showToast("$errorMessage", context, color: false);
                     setState(() {
                       homeLoad = false;
                     });
-                  } else if (getHomeModel.data?.status == false) {
-                    debugPrint("getHomeModel:${getHomeModel.message}");
-                    setState(() {
-                      showToast("${getHomeModel.message}", context,
-                          color: false);
-                      homeLoad = false;
-                    });
+                  } else if (getHomeModel.success == true) {
+                    if (getHomeModel.data?.status == true) {
+                      setState(() {
+                        homeLoad = false;
+                        if (!_hasStartedAutoScrolls) {
+                          _startSlideshowAutoScroll();
+                          _startTestimonialsAutoScroll();
+                          _hasStartedAutoScrolls = true;
+                        }
+                      });
+                    } else if (getHomeModel.data?.status == false) {
+                      debugPrint("getHomeModel:${getHomeModel.message}");
+                      setState(() {
+                        showToast("${getHomeModel.message}", context,
+                            color: false);
+                        homeLoad = false;
+                      });
+                    }
                   }
+                  return true;
                 }
-                return true;
-              }
-              return false;
-            }),
-            builder: (context, dynamic) {
-              return mainContainer();
-            },
-          )),
-    );
+                return false;
+              }),
+              builder: (context, dynamic) {
+                return mainContainer();
+              },
+            ),
+            ),
+      );
   }
 
   Widget buildWelcomeSectionWithCarousel(Size size, Color backgroundColor,
       Color textColor, Color secondaryTextColor) {
-    final Color dynamicPurple =
-    widget.isDarkMode ? lightblueaccentColor : purpleColor;
-
     return homeLoad
         ? const SpinKitChasingDots(color: appPrimaryColor, size: 30)
         : getHomeModel.data == null
@@ -303,7 +257,8 @@ class HomeScreenViewState extends State<HomeScreenView> {
             appPrimaryColor,
             weight: FontWeight.w500,
           ),
-        ))
+        )
+    )
         : Column(
       children: [
         Container(
@@ -316,27 +271,57 @@ class HomeScreenViewState extends State<HomeScreenView> {
                   controller: _carouselPageController,
                   itemCount: getHomeModel.data!.slideshow!.length,
                   itemBuilder: (context, index) {
+                    final slideshowItem = getHomeModel.data!.slideshow![index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImage(
-                          imageUrl:
-                          "${getHomeModel.data!.slideshow![index].image}",
-                          width: size.width * 0.8,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) =>
-                          const Icon(
-                            Icons.error,
-                            size: 30,
-                            color: appHomeTextColor,
-                          ),
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) =>
-                          const SpinKitCircle(
-                              color: appPrimaryColor,
-                              size: 30),
+                        child: Stack(
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: "${slideshowItem.image}",
+                              width: double.infinity, // Use double.infinity to fill available width
+                              height: 200,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => const Icon(
+                                Icons.error,
+                                size: 30,
+                                color: appHomeTextColor,
+                              ),
+                              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                              const SpinKitCircle(color: appPrimaryColor, size: 30),
+                            ),
+                            Positioned(
+                              bottom: 50,
+                              left: 0,
+                              right: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0), // Add padding
+                                child: Text(
+                                  slideshowItem.title ?? '',
+                                  style: MyTextStyle.f24(whiteColor, weight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 20,
+                              left: 0,
+                              right: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0), // Add padding
+                                child: Text(
+                                  slideshowItem.subtitle ?? '',
+                                  style: MyTextStyle.f14(whiteColor,weight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -350,16 +335,14 @@ class HomeScreenViewState extends State<HomeScreenView> {
                 effect: WormEffect(
                   dotHeight: 8,
                   dotWidth: 8,
-                  activeDotColor: widget.isDarkMode
-                      ? Colors.amber
-                      : appPrimaryColor, // Adjust dot color
+                  activeDotColor:
+                  appPrimaryColor,
                 ),
               ),
               const SizedBox(height: 20),
             ],
           ),
         ),
-
         Container(
           color: backgroundColor,
           padding: const EdgeInsets.all(32.0),
@@ -459,7 +442,7 @@ class HomeScreenViewState extends State<HomeScreenView> {
   }
 
   Widget buildTransformingDentalHealthSection(Color backgroundColor,
-      Color textColor, Color secondaryTextColor, Color purpleColor) {
+      Color textColor, Color secondaryTextColor, Color purpleColor)  {
     return Container(
       padding: const EdgeInsets.all(32.0),
       color: backgroundColor,
@@ -595,12 +578,11 @@ class HomeScreenViewState extends State<HomeScreenView> {
             ),
           ),
           const SizedBox(height: 24),
-
           Text(
             '${getHomeModel.data?.teamDescription}',
             style: TextStyle(
-              fontFamily: 'Times New Roman', // Applied font family
-              color: secondaryTextColor, // Use dynamic color
+              fontFamily: 'Times New Roman',
+              color: secondaryTextColor,
               fontSize: 16,
               height: 1.5,
             ),
@@ -610,13 +592,11 @@ class HomeScreenViewState extends State<HomeScreenView> {
           LayoutBuilder(
             builder: (context, constraints) {
               final team = getHomeModel.data?.teamMembers ?? [];
-
               if (team.isEmpty) {
                 return Center(child: Text("No team data available"));
               }
 
               if (constraints.maxWidth > 700) {
-                // Wide screens (row layout)
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: team.map((member) {
@@ -770,21 +750,12 @@ class HomeScreenViewState extends State<HomeScreenView> {
 
   void showReviewDialog(BuildContext context, Color dialogFieldFillColor,
       Color purpleColor) {
-    // Define colors for the dialog based on dark mode state
-    final Color dialogBackgroundColor =
-    widget.isDarkMode ? Colors.grey[800]! : Colors.white;
-    final Color dialogTextColor =
-    widget.isDarkMode ? Colors.white : Colors.black;
-    final Color dialogLabelColor =
-    widget.isDarkMode ? Colors.grey[400]! : Colors.grey;
 
-    // A GlobalKey to manage the form state for validation
     final _formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // Use a StatefulBuilder inside the dialog to manage its internal state (like selected stars)
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -879,13 +850,11 @@ class HomeScreenViewState extends State<HomeScreenView> {
                               onChanged: (int? newValue) {
                                 if (newValue != null) {
                                   setState(() {
-                                    // Use setState from StatefulBuilder
                                     _selectedStars = newValue;
                                   });
                                 }
                               },
                               items: List.generate(5, (index) {
-                                // Generate stars in descending order: 5, 4, 3, 2, 1
                                 final int starValue = 5 - index;
                                 return DropdownMenuItem<int>(
                                   value: starValue,
@@ -928,7 +897,7 @@ class HomeScreenViewState extends State<HomeScreenView> {
                               borderSide: BorderSide(
                                   color: purpleColor,
                                   width:
-                                  2), // Purple border on focus, now dynamic
+                                  2),
                             ),
                           ),
                           validator: (value) {
@@ -956,19 +925,22 @@ class HomeScreenViewState extends State<HomeScreenView> {
                           child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                print('Full Name: ${_fullNameController.text}');
-                                print('Stars: $_selectedStars');
-                                print('Review: ${_reviewController.text}');
+                                // print('Full Name: ${_fullNameController.text}');
+                                // print('Stars: $_selectedStars');
+                                // print('Review: ${_reviewController.text}');
+                                submitReview(
+                                  name: _fullNameController.text.trim(),
+                                  review: _reviewController.text.trim(),
+                                  rating: _selectedStars,
+                                  context: context,
+                                );
                                 Navigator.of(context)
                                     .pop(); // Close the dialog after submission
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors
-                                  .transparent,
-                              // Make button transparent to show gradient
+                              backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
-                              // No shadow
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -996,58 +968,58 @@ class HomeScreenViewState extends State<HomeScreenView> {
 
   Widget buildWhatOurClientsSaySection(Color backgroundColor,
       Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
+    final reviews = getHomeModel.data?.reviews;
+    if (reviews == null || reviews.isEmpty) {
+      return const SizedBox();
+    }
     return Container(
-      color: backgroundColor, // Use dynamic color
+      color: backgroundColor,
       padding: const EdgeInsets.all(32.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, // Center the heading
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'What Our Clients Say',
-            style: MyTextStyle.f36(
-              textColor,
-            ),
+            style: MyTextStyle.f36(textColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           SizedBox(
-            height: 200, // Height for the small testimonial cards
+            height: 200,
             child: PageView.builder(
-              controller: _smallTestimonialsPageController,
-              itemCount: testimonials.length,
+              controller: _testimonialsPageController, // Changed to testimonialsPageController
+              itemCount: reviews.length,
               itemBuilder: (context, index) {
-                final testimonial = testimonials[index];
+                final testimonial = reviews[index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: buildSmallTestimonialCard(
-                      testimonial,
-                      cardBackgroundColor,
-                      textColor,
-                      secondaryTextColor), // Pass colors
+                    testimonial,
+                    cardBackgroundColor,
+                    textColor,
+                    secondaryTextColor,
+                  ),
                 );
               },
             ),
           ),
-          const SizedBox(height: 20),
-          Center(
-            child: SmoothPageIndicator(
-              controller: _smallTestimonialsPageController,
-              count: testimonials.length,
-              effect: WormEffect(
-                dotHeight: 8,
-                dotWidth: 8,
-                activeDotColor: widget.isDarkMode
-                    ? Colors.amber
-                    : Colors.black54, // Adjust dot color
-              ),
+          const SizedBox(height: 10),
+          SmoothPageIndicator(
+            controller: _testimonialsPageController, // Changed to testimonialsPageController
+            count: reviews.length,
+            effect: WormEffect(
+              dotHeight: 8,
+              dotWidth: 8,
+              activeDotColor: appPrimaryColor,
             ),
           ),
+          const SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  Widget buildSmallTestimonialCard(Testimonial testimonial,
+  Widget buildSmallTestimonialCard(Reviews testimonial,
       Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1070,9 +1042,9 @@ class HomeScreenViewState extends State<HomeScreenView> {
         CrossAxisAlignment.center, // Center content horizontally
         children: [
           Text(
-            testimonial.clientName,
+            testimonial.name??'nullable',
             style:MyTextStyle.f18(
-                textColor,
+              textColor,
             ),
             textAlign: TextAlign.center,
           ),
@@ -1081,7 +1053,9 @@ class HomeScreenViewState extends State<HomeScreenView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(5, (index) {
               return Icon(
-                index < testimonial.stars ? Icons.star : Icons.star_border,
+                index < (testimonial.rating ?? 0).toInt()
+                    ? Icons.star
+                    : Icons.star_border,
                 color: Colors.amber,
                 size: 20,
               );
@@ -1089,10 +1063,10 @@ class HomeScreenViewState extends State<HomeScreenView> {
           ),
           const SizedBox(height: 8),
           Text(
-            testimonial.shortQuote,
+            testimonial.review??'null',
             style:MyTextStyle.f14(
-                secondaryTextColor,
-                fontStyle: FontStyle.italic,
+              secondaryTextColor,
+              fontStyle: FontStyle.italic,
             ),
             textAlign: TextAlign.center,
             maxLines: 2,

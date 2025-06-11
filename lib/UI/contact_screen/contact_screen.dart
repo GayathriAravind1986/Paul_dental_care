@@ -73,158 +73,160 @@ class ContactScreenViewState extends State<ContactScreenView>
       return contactLoad
           ? const SpinKitChasingDots(color: appPrimaryColor, size: 30)
           : getContactModel.data == null
-              ? Container(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.02),
-                  alignment: Alignment.center,
-                  child: Text(
-                    "No Contacts found !!!",
-                    style: MyTextStyle.f16(
-                      appPrimaryColor,
-                      weight: FontWeight.w500,
-                    ),
-                  ))
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Get in Touch',
-                        style:MyTextStyle.f36(
-                          textColorcontact,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'We would love to hear from you. Feel free to reach out through any of the following channels.',
-                        style:MyTextStyle.f16(
-                          secondaryTextColorcontact,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 40),
-                      // New parent card wrapping the three contact cards
-                      Container(
-                        padding: const EdgeInsets.all(
-                            24.0), // Padding inside the main card
-                        decoration: BoxDecoration(
-                          color:
-                              mainCardBackgroundColor, // Use the new background color
-                          borderRadius: BorderRadius.circular(
-                              16), // Slightly larger rounded corners
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(
-                                  0.2), // More prominent shadow for the main card
-                              spreadRadius: 3,
-                              blurRadius: 7,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            if (constraints.maxWidth > 700) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: buildContactCard(
-                                      icon: Icons.location_on,
-                                      title: 'Address',
-                                      content:
-                                          "${getContactModel.data!.contact!.contactAddress}",
-                                      cardBackgroundColor: cardBackgroundColorcontact,
-                                      textColor: textColorcontact,
-                                      secondaryTextColor: secondaryTextColorcontact,
-                                      iconColor: iconColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 20),
-                                  Expanded(
-                                    child: buildContactCard(
-                                      icon: Icons.phone,
-                                      title: 'Phone',
-                                      content:
-                                          "${getContactModel.data!.contact!.contactPhone}",
-                                      cardBackgroundColor: cardBackgroundColorcontact,
-                                      textColor: textColorcontact,
-                                      secondaryTextColor: secondaryTextColorcontact,
-                                      iconColor: iconColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 20),
-                                  Expanded(
-                                    child: buildContactCard(
-                                      icon: Icons.mail,
-                                      title: 'Mail',
-                                      content:
-                                          "${getContactModel.data!.contact!.contactMail}",
-                                      cardBackgroundColor: cardBackgroundColorcontact,
-                                      textColor: textColorcontact,
-                                      secondaryTextColor: secondaryTextColorcontact,
-                                      iconColor: iconColor,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return Column(
-                                children: [
-                                  buildContactCard(
-                                    icon: Icons.location_on,
-                                    title: 'Address',
-                                    content:
-                                        "${getContactModel.data!.contact!.contactAddress}",
-                                    cardBackgroundColor: cardBackgroundColorcontact,
-                                    textColor: textColorcontact,
-                                    secondaryTextColor: secondaryTextColorcontact,
-                                    iconColor: iconColor,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  buildContactCard(
-                                    icon: Icons.phone,
-                                    title: 'Phone',
-                                    content:
-                                        "${getContactModel.data!.contact!.contactPhone}",
-                                    cardBackgroundColor: cardBackgroundColorcontact,
-                                    textColor: textColorcontact,
-                                    secondaryTextColor: secondaryTextColorcontact,
-                                    iconColor: iconColor,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  buildContactCard(
-                                    icon: Icons.mail,
-                                    title: 'Mail',
-                                    content:
-                                        "${getContactModel.data!.contact!.contactMail}",
-                                    cardBackgroundColor: cardBackgroundColorcontact,
-                                    textColor: textColorcontact,
-                                    secondaryTextColor:
-                                    secondaryTextColorcontact,
-                                    iconColor: iconColor,
-                                  ),
-                                ],
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                    ],
+          ? Container(
+          padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.height * 0.02),
+          alignment: Alignment.center,
+          child: Text(
+            "No Contacts found !!!",
+            style: MyTextStyle.f16(
+              appPrimaryColor,
+              weight: FontWeight.w500,
+            ),
+          ))
+          : SingleChildScrollView(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Get in Touch',
+              style:MyTextStyle.f36(
+                textColorcontact,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'We would love to hear from you. Feel free to reach out through any of the following channels.',
+              style:MyTextStyle.f16(
+                secondaryTextColorcontact,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+
+            Container(
+              padding: const EdgeInsets.all(
+                  24.0),
+              decoration: BoxDecoration(
+                color:
+                mainCardBackgroundColor, // Use the new background color
+                borderRadius: BorderRadius.circular(
+                    16), // Slightly larger rounded corners
+                boxShadow: [
+                  BoxShadow(
+                    color: greyColor.withOpacity(
+                        0.2), // More prominent shadow for the main card
+                    spreadRadius: 3,
+                    blurRadius: 7,
+                    offset: const Offset(0, 5),
                   ),
-                );
+                ],
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth > 700) {
+                    return Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: buildContactCard(
+                            icon: Icons.location_on,
+                            title: 'Address',
+                            content:
+                            "${getContactModel.data!.contact!.contactAddress}",
+                            cardBackgroundColor: cardBackgroundColorcontact,
+                            textColor: textColorcontact,
+                            secondaryTextColor: secondaryTextColorcontact,
+                            iconColor: iconColor,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: buildContactCard(
+                            icon: Icons.phone,
+                            title: 'Phone',
+                            content:
+                            "${getContactModel.data!.contact!.contactPhone}",
+                            cardBackgroundColor: cardBackgroundColorcontact,
+                            textColor: textColorcontact,
+                            secondaryTextColor: secondaryTextColorcontact,
+                            iconColor: iconColor,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: buildContactCard(
+                            icon: Icons.mail,
+                            title: 'Mail',
+                            content:
+                            "${getContactModel.data!.contact!.contactMail}",
+                            cardBackgroundColor: cardBackgroundColorcontact,
+                            textColor: textColorcontact,
+                            secondaryTextColor: secondaryTextColorcontact,
+                            iconColor: iconColor,
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Column(
+                      children: [
+                        buildContactCard(
+                          icon: Icons.location_on,
+                          title: 'Address',
+                          content:
+                          "${getContactModel.data!.contact!.contactAddress}",
+                          cardBackgroundColor: cardBackgroundColorcontact,
+                          textColor: textColorcontact,
+                          secondaryTextColor: secondaryTextColorcontact,
+                          iconColor: iconColor,
+                        ),
+                        const SizedBox(height: 20),
+                        buildContactCard(
+                          icon: Icons.phone,
+                          title: 'Phone',
+                          content:
+                          "${getContactModel.data!.contact!.contactPhone}",
+                          cardBackgroundColor: cardBackgroundColorcontact,
+                          textColor: textColorcontact,
+                          secondaryTextColor: secondaryTextColorcontact,
+                          iconColor: iconColor,
+                        ),
+                        const SizedBox(height: 20),
+                        buildContactCard(
+                          icon: Icons.mail,
+                          title: 'Mail',
+                          content:
+                          "${getContactModel.data!.contact!.contactMail}",
+                          cardBackgroundColor: cardBackgroundColorcontact,
+                          textColor: textColorcontact,
+                          secondaryTextColor:
+                          secondaryTextColorcontact,
+                          iconColor: iconColor,
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
-          (route) => false,
-        );
-        return false; // Prevent default back action
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                (route) => false,
+          );
+        }
       },
       child: Scaffold(
           backgroundColor: scaffoldBackgroundColor,
@@ -237,7 +239,7 @@ class ContactScreenViewState extends State<ContactScreenView>
                 Text(
                   'PAUL DENTAL CARE',
                   style:MyTextStyle.f20(
-                    whiteColor
+                      whiteColor
                   ),
                 ),
               ],
@@ -295,7 +297,7 @@ class ContactScreenViewState extends State<ContactScreenView>
     required Color iconColor,
   }) {
     return Container(
-      height: 250, // Fixed height to ensure all cards are the same size
+      height: 250,
       width: 250,
       padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
@@ -303,7 +305,7 @@ class ContactScreenViewState extends State<ContactScreenView>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: greyColor.withOpacity(0.1),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -312,8 +314,6 @@ class ContactScreenViewState extends State<ContactScreenView>
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        // No mainAxisSize.min or Flexible/Expanded on content here,
-        // the fixed height of the Container manages the layout.
         children: [
           Container(
             padding: const EdgeInsets.all(16),
@@ -330,26 +330,21 @@ class ContactScreenViewState extends State<ContactScreenView>
           const SizedBox(height: 24),
           Text(
             title,
-            style: TextStyle(
-              fontFamily: 'Times New Roman',
-              color: textColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            style:MyTextStyle.f20(
+                textColor,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             content,
-            style: TextStyle(
-              fontFamily: 'Times New Roman',
-              color: secondaryTextColor,
-              fontSize: 16,
+            style:MyTextStyle.f16(
+              secondaryTextColor
             ),
             textAlign: TextAlign.center,
-            maxLines: 2, // Allow content to wrap
+            maxLines: 2,
             overflow:
-                TextOverflow.ellipsis, // Add ellipsis if it still overflows
+            TextOverflow.ellipsis,
           ),
         ],
       ),

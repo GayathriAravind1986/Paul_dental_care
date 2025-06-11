@@ -21,10 +21,16 @@ const Color greyColor = Colors.grey;
 const Color greenColor = Colors.green;
 const Color yellowColor = Colors.yellow;
 const Color purpleColor = Colors.purple;
+final Color dynamicPurple = purpleColor;
 const Color pinkColor = Colors.pink;
 const Color lightblueaccentColor =Colors.lightBlueAccent;
 const Color amberaccentColor = Colors.amberAccent;
 const Color ambercolor = Colors.amber;
+
+
+final Color dialogBackgroundColor = Colors.white;
+final Color dialogTextColor = Colors.black;
+final Color dialogLabelColor = Colors.grey;
 
 const Color paragraphColor = Color(0xFF333333);
 const Color appBarBackgroundColordark = Color(0xFF424242);

@@ -2,6 +2,7 @@ import 'dart:convert';
 // import 'package:simple/ModelClass/Home/getHomeModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:simple/Bloc/Response/errorResponse.dart';
 import 'package:simple/ModelClass/Awareness/getAwarenessModel.dart';
 import 'package:simple/ModelClass/Contact/getContactModel.dart';
@@ -137,8 +138,6 @@ class ApiProvider {
       return getEventResponse;
     }
   }
-
-
 
   /// handle Error Response
   ErrorResponse handleError(Object error) {
