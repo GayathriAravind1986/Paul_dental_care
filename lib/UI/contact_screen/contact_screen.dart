@@ -4,6 +4,7 @@ import 'package:simple/Alertbox/snackBarAlert.dart';
 import 'package:simple/Bloc/Contact/contact_bloc.dart';
 import 'package:simple/ModelClass/Contact/getContactModel.dart';
 import 'package:simple/Reusable/color.dart';
+// import 'package:simple/Reusable/color.dart';
 import 'package:simple/Reusable/image.dart';
 import 'package:simple/Reusable/text_styles.dart';
 import 'package:simple/UI/buttomnavigationbar/buttomnavigation.dart';
@@ -68,19 +69,6 @@ class ContactScreenViewState extends State<ContactScreenView>
 
     final cardHeight = thumbHeight + 8 + 26 + 24 + 22;
 
-    final Color highlightColor =
-        widget.isDarkMode ? Colors.amber : Colors.pink[900]!;
-    final Color textColor = widget.isDarkMode ? Colors.white : Colors.black;
-    final Color secondaryTextColor =
-        widget.isDarkMode ? Colors.grey[400]! : Colors.grey;
-    final Color cardBackgroundColor =
-        widget.isDarkMode ? Colors.grey[800]! : Colors.white;
-    final Color iconColor =
-        widget.isDarkMode ? Colors.lightBlueAccent : Colors.purple;
-    // Define a background color for the main card that wraps the contact cards
-    final Color mainCardBackgroundColor =
-        widget.isDarkMode ? Colors.grey[850]! : const Color(0xFFF8F5FB);
-
     Widget mainContainer() {
       return contactLoad
           ? const SpinKitChasingDots(color: appPrimaryColor, size: 30)
@@ -103,22 +91,16 @@ class ContactScreenViewState extends State<ContactScreenView>
                     children: [
                       Text(
                         'Get in Touch',
-                        style: TextStyle(
-                          fontFamily: 'Times New Roman',
-                          color: textColor,
-                          fontSize: 36,
-                          fontWeight: FontWeight.w800,
+                        style:MyTextStyle.f36(
+                          textColorcontact,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 20),
                       Text(
                         'We would love to hear from you. Feel free to reach out through any of the following channels.',
-                        style: TextStyle(
-                          fontFamily: 'Times New Roman',
-                          color: secondaryTextColor,
-                          fontSize: 16,
-                          height: 1.5,
+                        style:MyTextStyle.f16(
+                          secondaryTextColorcontact,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -155,9 +137,9 @@ class ContactScreenViewState extends State<ContactScreenView>
                                       title: 'Address',
                                       content:
                                           "${getContactModel.data!.contact!.contactAddress}",
-                                      cardBackgroundColor: cardBackgroundColor,
-                                      textColor: textColor,
-                                      secondaryTextColor: secondaryTextColor,
+                                      cardBackgroundColor: cardBackgroundColorcontact,
+                                      textColor: textColorcontact,
+                                      secondaryTextColor: secondaryTextColorcontact,
                                       iconColor: iconColor,
                                     ),
                                   ),
@@ -168,9 +150,9 @@ class ContactScreenViewState extends State<ContactScreenView>
                                       title: 'Phone',
                                       content:
                                           "${getContactModel.data!.contact!.contactPhone}",
-                                      cardBackgroundColor: cardBackgroundColor,
-                                      textColor: textColor,
-                                      secondaryTextColor: secondaryTextColor,
+                                      cardBackgroundColor: cardBackgroundColorcontact,
+                                      textColor: textColorcontact,
+                                      secondaryTextColor: secondaryTextColorcontact,
                                       iconColor: iconColor,
                                     ),
                                   ),
@@ -181,9 +163,9 @@ class ContactScreenViewState extends State<ContactScreenView>
                                       title: 'Mail',
                                       content:
                                           "${getContactModel.data!.contact!.contactMail}",
-                                      cardBackgroundColor: cardBackgroundColor,
-                                      textColor: textColor,
-                                      secondaryTextColor: secondaryTextColor,
+                                      cardBackgroundColor: cardBackgroundColorcontact,
+                                      textColor: textColorcontact,
+                                      secondaryTextColor: secondaryTextColorcontact,
                                       iconColor: iconColor,
                                     ),
                                   ),
@@ -197,9 +179,9 @@ class ContactScreenViewState extends State<ContactScreenView>
                                     title: 'Address',
                                     content:
                                         "${getContactModel.data!.contact!.contactAddress}",
-                                    cardBackgroundColor: cardBackgroundColor,
-                                    textColor: textColor,
-                                    secondaryTextColor: secondaryTextColor,
+                                    cardBackgroundColor: cardBackgroundColorcontact,
+                                    textColor: textColorcontact,
+                                    secondaryTextColor: secondaryTextColorcontact,
                                     iconColor: iconColor,
                                   ),
                                   const SizedBox(height: 20),
@@ -208,9 +190,9 @@ class ContactScreenViewState extends State<ContactScreenView>
                                     title: 'Phone',
                                     content:
                                         "${getContactModel.data!.contact!.contactPhone}",
-                                    cardBackgroundColor: cardBackgroundColor,
-                                    textColor: textColor,
-                                    secondaryTextColor: secondaryTextColor,
+                                    cardBackgroundColor: cardBackgroundColorcontact,
+                                    textColor: textColorcontact,
+                                    secondaryTextColor: secondaryTextColorcontact,
                                     iconColor: iconColor,
                                   ),
                                   const SizedBox(height: 20),
@@ -219,9 +201,10 @@ class ContactScreenViewState extends State<ContactScreenView>
                                     title: 'Mail',
                                     content:
                                         "${getContactModel.data!.contact!.contactMail}",
-                                    cardBackgroundColor: cardBackgroundColor,
-                                    textColor: textColor,
-                                    secondaryTextColor: secondaryTextColor,
+                                    cardBackgroundColor: cardBackgroundColorcontact,
+                                    textColor: textColorcontact,
+                                    secondaryTextColor:
+                                    secondaryTextColorcontact,
                                     iconColor: iconColor,
                                   ),
                                 ],
@@ -253,28 +236,12 @@ class ContactScreenViewState extends State<ContactScreenView>
                 const SizedBox(width: 10),
                 Text(
                   'PAUL DENTAL CARE',
-                  style: TextStyle(
-                    fontFamily: 'Times New Roman', // Applied font family
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white, // Use dynamic color
+                  style:MyTextStyle.f20(
+                    whiteColor
                   ),
                 ),
               ],
             ),
-            actions: [
-              IconButton(
-                icon: Icon(
-                  widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                  color: Colors.white, // Always white for visibility
-                ),
-                onPressed: () {
-                  setState(() {
-                    //widget.isDarkMode = !widget.isDarkMode; // Toggle dark mode
-                  });
-                },
-              ),
-            ],
           ),
           body: BlocBuilder<ContactDentalBloc, dynamic>(
             buildWhen: ((previous, current) {

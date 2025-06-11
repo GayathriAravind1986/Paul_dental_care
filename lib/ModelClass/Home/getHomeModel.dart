@@ -13,8 +13,7 @@ class GetHomeModel {
     _success = success;
     _data = data;
     _message = message;
-
-}
+  }
 
   GetHomeModel.fromJson(dynamic json) {
     _success = json['success'];

@@ -66,22 +66,8 @@ class _EventsPageViewState extends State<EventsPageView> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final Color scaffoldBackgroundColor =
-    widget.isDarkMode ? Colors.grey[900]! : whiteColor;
-    final Color appBarBackgroundColor =
-    widget.isDarkMode ? const Color(0xFF424242) : appPrimaryColor;
-    final Color backgroundColor =
-    widget.isDarkMode ? Colors.grey[900]! : const Color(0xFFF1F2F7);
-    final Color cardColor =
-    widget.isDarkMode ? Colors.grey[800]! : Colors.white;
-    final Color titleColor =
-    widget.isDarkMode ? Colors.amberAccent : Colors.red;
-    final Color textColor = widget.isDarkMode ? Colors.white : Colors.black87;
-    final Color descriptionColor =
-    widget.isDarkMode ? Colors.grey[300]! : Colors.black;
-    final Color iconColor = widget.isDarkMode ? Colors.white : Colors.black;
-
+  Widget build(BuildContext context)
+  {
     return WillPopScope(
       onWillPop: () async {
         if (ModalRoute.of(context)?.isCurrent == true) {
@@ -102,11 +88,8 @@ class _EventsPageViewState extends State<EventsPageView> {
               const SizedBox(width: 10),
               Text(
                 'PAUL DENTAL CARE',
-                style: TextStyle(
-                  fontFamily: 'Times New Roman',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                style:MyTextStyle.f20(
+                    whiteColor,
                 ),
               ),
             ],
@@ -193,34 +176,31 @@ class _EventsPageViewState extends State<EventsPageView> {
                                   const SizedBox(height: 12),
                                   Text(
                                     '${e.title}',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: titleColor),
+                                    style:MyTextStyle.f20(
+                                        titleColor,
+                                    ),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
                                     'Date: ${e.eventDate}',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor),
+                                    style:MyTextStyle.f16(
+                                        textColor,
+                                    ),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
                                     "${e.description}",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: descriptionColor),
+                                    style:MyTextStyle.f14(
+                                        descriptionColor
+                                    ),
                                   ),
                                   if (index != 1) ...[
                                     const SizedBox(height: 12),
                                     Text(
                                       'Event Images',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: textColor),
+                                      style:MyTextStyle.f16(
+                                          textColor,
+                                      ),
                                     ),
                                     const SizedBox(height: 10),
                                     Stack(
@@ -269,7 +249,8 @@ class _EventsPageViewState extends State<EventsPageView> {
                                           left: 0,
                                           child: IconButton(
                                             icon: Icon(Icons.arrow_back_ios,
-                                                color: iconColor),
+                                                color: iconColorevents
+                                            ),
                                             onPressed: _previousImage,
                                           ),
                                         ),
@@ -277,7 +258,8 @@ class _EventsPageViewState extends State<EventsPageView> {
                                           right: 0,
                                           child: IconButton(
                                             icon: Icon(Icons.arrow_forward_ios,
-                                                color: iconColor),
+                                                color: iconColorevents
+                                            ),
                                             onPressed: _nextImage,
                                           ),
                                         ),

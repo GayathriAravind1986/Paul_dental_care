@@ -27,31 +27,31 @@ class AwarenessPage extends StatelessWidget {
   }
 }
 
-
 class AwarenessPageView extends StatefulWidget {
   final bool isDarkMode;
-  const AwarenessPageView({
-    super.key,
-    required this.isDarkMode,
-  });
+  const AwarenessPageView({super.key, required this.isDarkMode});
 
   @override
   AwarenessPageViewState createState() => AwarenessPageViewState();
 }
 
 class AwarenessPageViewState extends State<AwarenessPageView> {
-  //PutFeedBackModel putFeedBackModel = PutFeedBackModel();
   GetAwarenessModel getAwarenessModel = GetAwarenessModel();
   String? errorMessage;
   bool awarenessLoad = false;
-  //  final _videos = [
-  //   VideoItem(id: 'I7-G4rrQyx0', title: '${getAwarenessModel.data!.awareness!.title}', date: '${getAwarenessModel.data!.awareness!.event_date}'),
-  //   const VideoItem(id: 'Z1iHVxOCCkA', title: 'Precautions', date: '05-04-2025'),
-  //   const VideoItem(id: 'GLeUJhybJQw', title: 'Dental', date: '02-06-2025'),
-  // ];
+  late bool isDarkMode;
+
+  @override
+  void initState() {
+    super.initState();
+    isDarkMode = widget.isDarkMode;
+    context.read<ContactDentalBloc>().add(AwarenessDental());
+    awarenessLoad = true;
+  }
+
   List<VideoItem> get videosFromModel {
-    if (getAwarenessModel?.data?.awareness == null) return [];
-    return getAwarenessModel!.data!.awareness!.map((awareness) {
+    if (getAwarenessModel.data?.awareness == null) return [];
+    return getAwarenessModel.data!.awareness!.map((awareness) {
       final videoId = YoutubePlayer.convertUrlToId(awareness.url ?? '') ?? '';
       return VideoItem(
         id: videoId,
@@ -61,56 +61,38 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
     }).toList();
   }
 
-  bool feedLoad = false;
-  @override
-  void initState() {
-    super.initState();
-    context.read<ContactDentalBloc>().add(AwarenessDental());
-    awarenessLoad = true;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    final Color scaffoldBackgroundColor =
-        widget.isDarkMode ? Colors.grey[900]! : whiteColor;
-    final Color appBarBackgroundColor =
-        widget.isDarkMode ? const Color(0xFF424242) : appPrimaryColor;
-
-    final width = MediaQuery.of(context).size.width;
-
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
     final columns = width < 600 ? 1 : 2;
-
     final tileWidth = (width - 32 - (columns - 1) * 24) / columns;
-
     final thumbHeight = tileWidth * 9 / 16;
-
     final cardHeight = thumbHeight + 8 + 26 + 24 + 22;
 
-    final Color highlightColor =
-        widget.isDarkMode ? Colors.amber : Colors.pink[900]!;
 
     Widget mainContainer() {
-      return awarenessLoad
-          ? const SpinKitChasingDots(color: appPrimaryColor, size: 30)
-          : getAwarenessModel.data == null
-          ? Container(
-          padding: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.02),
-          alignment: Alignment.center,
-          child: Text(
-            "No Contacts found !!!",
-            style: MyTextStyle.f16(
-              appPrimaryColor,
-              weight: FontWeight.w500,
+      if (awarenessLoad) {
+        return const Center(
+          child: SpinKitChasingDots(color: appPrimaryColor, size: 30),
+        );
+      }
+
+      if (getAwarenessModel.data == null || videosFromModel.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.only(top: height * 0.02),
+            child: Text(
+              "No awareness videos available!",
+              style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.w500),
             ),
-          ),):Container(
-        color: scaffoldBackgroundColor,
+          ),
+        );
+      }
+
+      return Container(
+        color: scaffoldBackgroundColorawareness,
         child: CustomScrollView(
           slivers: [
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
@@ -121,16 +103,15 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
                     'assets/image/awarenessimage.jpg',
-                    height: MediaQuery.of(context).size.height * .28,
+                    height: height * .28,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        height: MediaQuery.of(context).size.height * .28,
+                        height: height * .28,
                         color: Colors.grey[300],
                         child: const Center(
-                          child: Text('Image not found',
-                              style: TextStyle(color: Colors.black54)),
+                          child: Text('Image not found', style: TextStyle(color: Colors.black54)),
                         ),
                       );
                     },
@@ -142,10 +123,10 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               sliver: SliverGrid(
                 delegate: SliverChildBuilderDelegate(
-                  (context, i) => VideoCard(
-                      item: videosFromModel[i],
-                      isDarkMode:
-                          widget.isDarkMode), // Pass isDarkMode to video card
+                      (context, i) => VideoCard(
+                    item: videosFromModel[i],
+                    isDarkMode: isDarkMode,
+                  ),
                   childCount: videosFromModel.length,
                 ),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -157,92 +138,67 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
               ),
             ),
           ],
-        )
+        ),
       );
     }
-
 
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const DashboardScreen()),
-          (route) => false,
+              (route) => false,
         );
         return false;
       },
       child: Scaffold(
-          backgroundColor: scaffoldBackgroundColor,
-          appBar: AppBar(
-            backgroundColor: appBarBackgroundColor,
-            title: Row(
-              children: [
-                Image.asset(Images.logo1, height: 50, width: 50),
-                const SizedBox(width: 10),
-                Text(
-                  'PAUL DENTAL CARE',
-                  style: TextStyle(
-                    fontFamily: 'Times New Roman', // Applied font family
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white, // Use dynamic color
-                  ),
+        backgroundColor: scaffoldBackgroundColorawareness,
+        appBar: AppBar(
+          backgroundColor: appBarBackgroundColorawareness,
+          title: Row(
+            children: [
+              Image.asset(Images.logo1, height: 50, width: 50),
+              const SizedBox(width: 10),
+               Text(
+                'PAUL DENTAL CARE',
+                style:MyTextStyle.f20(
+                    whiteColor
                 ),
-              ],
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(
-                  widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                  color: Colors.white, // Always white for visibility
-                ),
-                onPressed: () {
-                  setState(() {
-                    //widget.isDarkMode = !widget.isDarkMode; // Toggle dark mode
-                  });
-                },
-              ),
+               ),
             ],
           ),
-          body: BlocBuilder<ContactDentalBloc, dynamic>(
-            buildWhen: ((previous, current) {
-              debugPrint("current:$current");
-              if (current is GetAwarenessModel) {
-                getAwarenessModel = current;
-                if (current.errorResponse != null) {
-                  if (current.errorResponse!.errors != null &&
-                      current.errorResponse!.errors!.isNotEmpty) {
-                    errorMessage = current.errorResponse!.errors![0].message ??
-                        "Something went wrong";
-                  } else {
-                    errorMessage = "Something went wrong";
-                  }
-                  showToast("$errorMessage", context, color: false);
-                  setState(() {
-                    awarenessLoad = false;
-                  });
-                } else if (getAwarenessModel.success == true) {
-                  if (getAwarenessModel.data?.status == true) {
-                    debugPrint("getEventModel:${getAwarenessModel.message}");
-                    setState(() {
-                      awarenessLoad = false;
-                    });
-                  } else if (getAwarenessModel.data?.status == false) {
-                    debugPrint("getEventModel:${getAwarenessModel.message}");
-                    setState(() {
-                      showToast("${getAwarenessModel.message}", context,
-                          color: false);
-                      awarenessLoad = false;
-                    });
-                  }
+        ),
+        body: BlocBuilder<ContactDentalBloc, dynamic>(
+          buildWhen: (previous, current) {
+            if (current is GetAwarenessModel)
+            {
+              getAwarenessModel = current;
+              if (current.errorResponse != null) {
+                final errorList = current.errorResponse!.errors;
+                errorMessage = (errorList != null && errorList.isNotEmpty)
+                    ? errorList[0].message ?? "Something went wrong"
+                    : "Something went wrong";
+
+                showToast(errorMessage!, context, color: false);
+                setState(() => awarenessLoad = false);
+              } else if (current.success == true) {
+                if (current.data?.status == true) {
+                  debugPrint("getEventModel: ${current.message}");
+                  setState(() => awarenessLoad = false);
+                } else {
+                  debugPrint("getEventModel: ${current.message}");
+                  showToast(current.message ?? "Unknown Error", context, color: false);
+                  setState(() => awarenessLoad = false);
                 }
-                return true;
               }
-              return false;
-            }),
-            builder: (context, dynamic) {
-              return mainContainer();
-            },
-          )),
+              return true;
+            }
+            return false;
+          },
+          builder: (context, state) {
+            return mainContainer();
+          },
+        ),
+      ),
     );
   }
 }

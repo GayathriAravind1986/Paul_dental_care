@@ -94,8 +94,7 @@ class ApiProvider {
       );
       if (response.statusCode == 200) {
         debugPrint("API Response: ${json.encode(response.data)}");
-        GetHomeModel getHomeModel =
-        GetHomeModel.fromJson(response.data);
+        GetHomeModel getHomeModel = GetHomeModel.fromJson(response.data);
         return getHomeModel;
       } else {
         debugPrint(
