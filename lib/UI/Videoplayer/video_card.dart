@@ -4,9 +4,8 @@ import 'package:simple/UI/Videoplayer/videoplayer.dart';
 
 class VideoCard extends StatelessWidget {
   final VideoItem item;
-  final bool isDarkMode; // Added isDarkMode property
+  final bool isDarkMode;
 
-  // Constructor updated to accept isDarkMode
   const VideoCard({required this.item, required this.isDarkMode});
 
   @override
@@ -17,59 +16,77 @@ class VideoCard extends StatelessWidget {
     final Color highlightColor = isDarkMode ? Colors.amber : Colors.pink[900]!;
 
     return InkWell(
-      borderRadius: BorderRadius.circular(32), // Rounded corners for the tappable area
-      onTap: () => Navigator.of(context).push( // Navigate to video player page on tap
-        MaterialPageRoute(builder: (_) => VideoPlayerPage(item: item, isDarkMode: isDarkMode)), // Pass isDarkMode
+      borderRadius: BorderRadius.circular(32),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => VideoPlayerPage(item: item, isDarkMode: isDarkMode)),
       ),
       child: Material(
-        color: cardColor, // Use dynamic card background color
-        elevation: 6, // Shadow effect
-        borderRadius: BorderRadius.circular(32), // Rounded corners for the card material
+        color: cardColor,
+        elevation: 6,
+        borderRadius: BorderRadius.circular(32),
         child: Padding(
-          padding: const EdgeInsets.all(12), // Inner padding for card content
+          padding: const EdgeInsets.all(12),
           child: Column(
-            mainAxisSize: MainAxisSize.min, // Column takes minimum space needed
+            mainAxisSize: MainAxisSize.min,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16), // Rounded corners for the thumbnail
-                child: AspectRatio(
-                  aspectRatio: 16 / 9, // Standard video aspect ratio
-                  child: Image.network(
-                    'https://img.youtube.com/vi/${item.id}/hqdefault.jpg', // YouTube thumbnail URL
-                    fit: BoxFit.cover, // Cover the entire space
-                    loadingBuilder: (_, child, progress) =>
-                    progress == null ? child : const Center(child: CircularProgressIndicator()), // Loading indicator
-                    errorBuilder: (context, error, stackTrace) {
-                      // Fallback widget if thumbnail fails to load
-                      return Container(
-                        color: Colors.grey[300],
-                        child: const Center(
-                          child: Icon(Icons.videocam_off, color: Colors.black54),
-                        ),
-                      );
-                    },
+              // Stack for thumbnail with play button overlay
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Image.network(
+                        'https://img.youtube.com/vi/${item.id}/hqdefault.jpg',
+                        fit: BoxFit.cover,
+                        loadingBuilder: (_, child, progress) =>
+                        progress == null ? child : const Center(child: CircularProgressIndicator()),
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: Icon(Icons.videocam_off, color: Colors.black54),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  // Play button overlay
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 25,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8), // Spacing below thumbnail
+              const SizedBox(height: 8),
               Text(
                 item.title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: highlightColor, // Use dynamic highlight color for title
+                  color: highlightColor,
                   fontFamily: 'Times New Roman',
                 ),
               ),
-              const SizedBox(height: 4), // Spacing below title
+              const SizedBox(height: 4),
               Text(
                 'Date: ${item.date}',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Times New Roman',
-                  color: textColor, // Use dynamic text color for date
+                  color: textColor,
                 ),
               ),
             ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:simple/Reusable/color.dart';
 import 'package:simple/UI/Event_Screen/events.dart';
 import 'package:simple/UI/Home_screen/home_screen.dart';
@@ -35,14 +36,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return WillPopScope(
-      onWillPop: () async {
-        if (_currentIndex != 0) {
-          setState(() => _currentIndex = 0);
-          return false;
-        }
-        return true;
-      },
-      child: Scaffold(
+        onWillPop: () async {
+          if (_currentIndex != 0) {
+            // If not on home screen, switch to home tab instead of exiting
+            setState(() => _currentIndex = 0);
+            return false;
+          } else {
+            // On home screen - check if we can pop any routes
+            if (Navigator.of(context).canPop()) {
+              return true; // Allow normal back navigation
+            } else {
+              // At root home screen - show exit confirmation
+              final shouldExit = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Exit App"),
+                  content: const Text("Are you sure you want to exit?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text("No"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, true); // Close dialog
+                        SystemNavigator.pop(); // Exit app
+                      },
+                      child: const Text("Yes"),
+                    ),
+                  ],
+                ),
+              );
+              return shouldExit ?? false;
+            }
+          }
+        },
+        child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
           children: _pages,
@@ -52,8 +81,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           onTap: (index) => setState(() => _currentIndex = index),
           isDarkMode: isDarkMode,
         ),
-      ),
+      )
     );
+    // );
   }
 }
 

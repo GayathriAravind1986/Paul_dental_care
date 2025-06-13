@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
       return OverlaySupport.global(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Paul Dental Care',
+          title: "PAUL DENTAL CARE",
           theme: ThemeData(
             primaryColor: appPrimaryColor,
             unselectedWidgetColor: appPrimaryColor,

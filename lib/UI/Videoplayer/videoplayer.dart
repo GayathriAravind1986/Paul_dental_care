@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple/Reusable/color.dart';
 import 'package:simple/UI/Videoplayer/videoItems.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -48,18 +49,17 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         widget.isDarkMode ? Colors.grey[900]! : Colors.white;
 
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor, // Dynamic background color
+      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: appBarBackgroundColor, // Dynamic app bar background
+        backgroundColor: appBarBackgroundColor,
         title: Text(
           widget.item.title,
           style: TextStyle(
-            // Use dynamic text color
-            color: textColor,
+            color: whiteColor,
             fontFamily: 'Times New Roman',
           ),
         ),
-        iconTheme: IconThemeData(color: textColor), // Dynamic icon color
+        iconTheme: IconThemeData(color: whiteColor), // Dynamic icon color
       ),
       body: Center(
         child: Padding(

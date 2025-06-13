@@ -4,7 +4,6 @@ import 'package:simple/Alertbox/snackBarAlert.dart';
 import 'package:simple/Bloc/Contact/contact_bloc.dart';
 import 'package:simple/ModelClass/Contact/getContactModel.dart';
 import 'package:simple/Reusable/color.dart';
-// import 'package:simple/Reusable/color.dart';
 import 'package:simple/Reusable/image.dart';
 import 'package:simple/Reusable/text_styles.dart';
 import 'package:simple/UI/buttomnavigationbar/buttomnavigation.dart';
@@ -55,20 +54,6 @@ class ContactScreenViewState extends State<ContactScreenView>
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    final Color scaffoldBackgroundColor = widget.isDarkMode ? greyColor: whiteColor;
-    final Color appBarBackgroundColor = widget.isDarkMode ? appBarBackgroundColordark : appPrimaryColor;
-
-    final width = MediaQuery.of(context).size.width;
-
-    final columns = width < 600 ? 1 : 2;
-
-    final tileWidth = (width - 32 - (columns - 1) * 24) / columns;
-
-    final thumbHeight = tileWidth * 9 / 16;
-
-    final cardHeight = thumbHeight + 8 + 26 + 24 + 22;
-
     Widget mainContainer() {
       return contactLoad
           ? const SpinKitChasingDots(color: appPrimaryColor, size: 30)
@@ -111,13 +96,13 @@ class ContactScreenViewState extends State<ContactScreenView>
                   24.0),
               decoration: BoxDecoration(
                 color:
-                mainCardBackgroundColor, // Use the new background color
+                mainCardBackgroundColor,
                 borderRadius: BorderRadius.circular(
-                    16), // Slightly larger rounded corners
+                    16),
                 boxShadow: [
                   BoxShadow(
                     color: greyColor.withOpacity(
-                        0.2), // More prominent shadow for the main card
+                        0.2),
                     spreadRadius: 3,
                     blurRadius: 7,
                     offset: const Offset(0, 5),
@@ -219,12 +204,13 @@ class ContactScreenViewState extends State<ContactScreenView>
     }
 
     return PopScope(
-      canPop: false,
+      canPop: false, // Disable default back button
       onPopInvoked: (didPop) {
         if (!didPop) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const DashboardScreen()),
-                (route) => false,
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                (route) => false, // Clear all routes
           );
         }
       },

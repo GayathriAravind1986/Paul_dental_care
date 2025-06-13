@@ -12,6 +12,14 @@ android {
     ndkVersion = flutter.ndkVersion
     namespace "com.example.simple"
 
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            // Format: PaulDentalCare (13.06.2025).apk
+            def date = "13.06.2025"
+            outputFileName = "PaulDentalCare (${date}).apk"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

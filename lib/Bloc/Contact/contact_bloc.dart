@@ -5,6 +5,17 @@ abstract class ContactDentalEvent {}
 
 class AwarenessDental extends ContactDentalEvent {}
 
+class ReviewDental extends ContactDentalEvent {
+  String? name;
+  String? review;
+  String? rating;
+  ReviewDental(
+      this.name,
+      this.review,
+      this.rating
+      );
+}
+
 class ContactDental extends ContactDentalEvent {}
 
 class EventDental extends ContactDentalEvent {}
@@ -20,6 +31,13 @@ class ContactDentalBloc extends Bloc<ContactDentalEvent, dynamic> {
         emit(error);
       });
     });
+    on<ReviewDental>((event, emit) async {
+      await ApiProvider().postReviewAPI(event.name,event.review,event.rating).then((value) {
+        emit(value);
+      }).catchError((error) {
+        emit(error);
+      });
+    });
     on<EventDental>((event, emit) async {
       await ApiProvider().getEventAPI().then((value) {
         emit(value);
@@ -27,6 +45,7 @@ class ContactDentalBloc extends Bloc<ContactDentalEvent, dynamic> {
         emit(error);
       });
     });
+
     on<AwarenessDental>((event, emit) async {
       await ApiProvider().getAwarenessAPI().then((value) {
         emit(value);
@@ -44,3 +63,4 @@ class ContactDentalBloc extends Bloc<ContactDentalEvent, dynamic> {
 
   }
 }
+

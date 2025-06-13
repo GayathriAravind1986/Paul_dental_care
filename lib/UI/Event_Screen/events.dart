@@ -8,6 +8,7 @@ import 'package:simple/ModelClass/Events/getEventModel.dart';
 import 'package:simple/Reusable/color.dart';
 import 'package:simple/Reusable/image.dart';
 import 'package:simple/Reusable/text_styles.dart';
+import 'package:simple/UI/Home_screen/home_screen.dart';
 import 'package:simple/UI/buttomnavigationbar/buttomnavigation.dart';
 
 class EventsPage extends StatelessWidget {
@@ -38,9 +39,6 @@ class _EventsPageViewState extends State<EventsPageView> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final Color placeholderColor = Colors.grey.shade200;
-  final Color placeholderTextColor = Colors.black54;
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -70,12 +68,13 @@ class _EventsPageViewState extends State<EventsPageView> {
     widget.isDarkMode ? appBarBackgroundColordark : appPrimaryColor;
 
     return PopScope(
-      canPop: false,
+      canPop: false, // Disable default back button
       onPopInvoked: (didPop) {
         if (!didPop) {
-          Navigator.of(context).pushAndRemoveUntil(
+          Navigator.pushAndRemoveUntil(
+            context,
             MaterialPageRoute(builder: (_) => const DashboardScreen()),
-                (route) => false,
+                (route) => false, // Clear all routes
           );
         }
       },
@@ -101,7 +100,6 @@ class _EventsPageViewState extends State<EventsPageView> {
                 showToast(errorMessage!, context, color: false);
               } else if (current.success == true &&
                   current.data?.status == true) {
-                // Success: no toast needed
               } else {
                 showToast(current.message ?? "Something went wrong", context, color: false);
               }
@@ -138,7 +136,6 @@ class _EventsPageViewState extends State<EventsPageView> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: getEventModel.data!.events!.asMap().entries.map((entry) {
-          final index = entry.key;
           final e = entry.value;
           final List<String> eventImages = e.images ?? [];
 

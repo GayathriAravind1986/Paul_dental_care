@@ -8,6 +8,7 @@ import 'package:simple/ModelClass/Awareness/getAwarenessModel.dart';
 import 'package:simple/ModelClass/Contact/getContactModel.dart';
 import 'package:simple/ModelClass/Events/getEventModel.dart';
 import 'package:simple/ModelClass/Home/getHomeModel.dart';
+import 'package:simple/ModelClass/ShareReview/postReviewModel.dart';
 import 'package:simple/Reusable/constant.dart';
 
 
@@ -136,6 +137,41 @@ class ApiProvider {
       GetEventModel getEventResponse = GetEventModel();
       getEventResponse.errorResponse = handleError(error);
       return getEventResponse;
+    }
+  }
+
+  /// Post Review API Integration
+  Future<PostReviewModel> postReviewAPI(String? name,String? review,String? rating) async {
+    try {
+      var data = json.encode({
+        "name":name,
+        "review":review,
+        "rating":rating,
+      });
+      var dio = Dio();
+      var response = await dio.request(
+        '${Constants.baseUrl}submit-review',
+        options: Options(
+          method: 'POST',
+        ),
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        debugPrint("API Response: ${json.encode(response.data)}");
+        PostReviewModel postReviewResponse = PostReviewModel.fromJson(response.data);
+        return postReviewResponse;
+      }
+      else
+      {
+        return PostReviewModel()
+          ..errorResponse =
+          ErrorResponse(message: "Error: ${response.statusCode}");
+      }
+    } catch (error) {
+      debugPrint("ErrorCatch: $error");
+      PostReviewModel postReviewResponse = PostReviewModel();
+      postReviewResponse.errorResponse = handleError(error);
+      return postReviewResponse;
     }
   }
 

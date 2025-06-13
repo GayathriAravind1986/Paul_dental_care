@@ -6,6 +6,7 @@ import 'package:simple/Reusable/image.dart';
 import 'package:simple/Reusable/text_styles.dart';
 import 'package:simple/Alertbox/snackBarAlert.dart';
 import 'package:simple/Bloc/Contact/contact_bloc.dart';
+import 'package:simple/UI/Home_screen/home_screen.dart';
 import 'package:simple/UI/Videoplayer/videoItems.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:simple/UI/Videoplayer/video_card.dart';
@@ -96,29 +97,6 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
         child: CustomScrollView(
           slivers: [
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    'assets/image/awarenessimage.jpg',
-                    height: height * .28,
-                    fit: BoxFit.cover,
-                    width: width * 0.9,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: height * .28,
-                        color: ClipRRectContainer,
-                        child: const Center(
-                          child: Text('Image not found', style: TextStyle(color: ClipRRectContainertext)),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               sliver: SliverGrid(
@@ -143,12 +121,13 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
     }
 
     return PopScope(
-      canPop: false,
+      canPop: false, // Disable default back button
       onPopInvoked: (didPop) {
         if (!didPop) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const DashboardScreen()),
-                (route) => false,
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                (route) => false, // Clear all routes
           );
         }
       },
@@ -183,10 +162,10 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
                 setState(() => awarenessLoad = false);
               } else if (current.success == true) {
                 if (current.data?.status == true) {
-                  debugPrint("getEventModel: ${current.message}");
+                  debugPrint("getAwarenessModel: ${current.message}");
                   setState(() => awarenessLoad = false);
                 } else {
-                  debugPrint("getEventModel: ${current.message}");
+                  debugPrint("getAwarenessModel: ${current.message}");
                   showToast(current.message ?? "Unknown Error", context, color: false);
                   setState(() => awarenessLoad = false);
                 }
