@@ -12,8 +12,9 @@ Future<void> main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
   ]);
-  //await cart.loadCartItems();
   Bloc.observer = AppBlocObserver();
   runApp(const App());
 }
@@ -32,7 +33,6 @@ class App extends StatelessWidget {
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -55,8 +55,6 @@ class _MyAppState extends State<MyApp> {
             unselectedWidgetColor: appPrimaryColor,
             fontFamily: "Poppins",
           ),
-          // darkTheme: ThemeData.light(),
-          // themeMode: ThemeMode.light,
           builder: (context, child) {
             return MediaQuery(
               data: MediaQuery.of(context)
@@ -77,7 +75,8 @@ class _MyAppState extends State<MyApp> {
 class MyBehavior extends ScrollBehavior {
   @override
   Widget buildOverscrollIndicator(
-      BuildContext context, Widget child, ScrollableDetails details) {
+      BuildContext context, Widget child, ScrollableDetails details)
+  {
     return child;
   }
 }

@@ -27,6 +27,7 @@ dependencies:
   carousel_slider: ^4.2.1
   url_launcher: ^6.2.10
   flutter_inappwebview: ^6.0.0 # or latest stable
+  change_app_package_name: ^1.5.0
 
 
 dev_dependencies:

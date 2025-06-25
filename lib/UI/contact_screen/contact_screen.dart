@@ -238,10 +238,12 @@ class ContactScreenViewState extends State<ContactScreenView>
                 getContactModel = current;
                 if (current.errorResponse != null) {
                   if (current.errorResponse!.errors != null &&
-                      current.errorResponse!.errors!.isNotEmpty) {
+                      current.errorResponse!.errors!.isNotEmpty)
+                  {
                     errorMessage = current.errorResponse!.errors![0].message ??
                         "Something went wrong";
-                  } else {
+                  }
+                  else {
                     errorMessage = "Something went wrong";
                   }
                   showToast("$errorMessage", context, color: false);
@@ -269,7 +271,8 @@ class ContactScreenViewState extends State<ContactScreenView>
             builder: (context, dynamic) {
               return mainContainer();
             },
-          )),
+          )
+      ),
     );
   }
 

@@ -329,12 +329,15 @@ class HomeScreenViewState extends State<HomeScreenView> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: team.map((member) {
                     return Expanded(
-                      child: buildDoctorCard(
-                        member.image ?? '',
-                        member.name ?? '',
-                        member.post ?? '',
-                        textColor,
-                        secondaryTextColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: buildDoctorCard(
+                          member.image ?? '',
+                          member.name ?? '',
+                          member.post ?? '',
+                          textColor,
+                          secondaryTextColor,
+                        ),
                       ),
                     );
                   }).toList(),
@@ -729,7 +732,7 @@ class HomeScreenViewState extends State<HomeScreenView> {
           ),
           const SizedBox(height: 10),
           SmoothPageIndicator(
-            controller: _testimonialsPageController, // Changed to testimonialsPageController
+            controller: _testimonialsPageController,
             count: reviews.length,
             effect: WormEffect(
               dotHeight: 8,

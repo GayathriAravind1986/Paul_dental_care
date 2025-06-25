@@ -42,7 +42,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             setState(() => _currentIndex = 0);
             return false;
           } else {
-            // On home screen - check if we can pop any routes
             if (Navigator.of(context).canPop()) {
               return true; // Allow normal back navigation
             } else {

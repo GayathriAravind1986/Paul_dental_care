@@ -160,11 +160,13 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
                     : "Something went wrong";
                 showToast(errorMessage!, context, color: false);
                 setState(() => awarenessLoad = false);
-              } else if (current.success == true) {
+              }
+              else if (current.success == true) {
                 if (current.data?.status == true) {
                   debugPrint("getAwarenessModel: ${current.message}");
                   setState(() => awarenessLoad = false);
-                } else {
+                }
+                else {
                   debugPrint("getAwarenessModel: ${current.message}");
                   showToast(current.message ?? "Unknown Error", context, color: false);
                   setState(() => awarenessLoad = false);

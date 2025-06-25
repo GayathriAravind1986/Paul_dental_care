@@ -51,8 +51,8 @@ class _SplashScreenState extends State<SplashScreen>
     //      :
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
-        (Route<dynamic> route) => false);
-    // }
+        (Route<dynamic> route) => false
+    );
   }
 
   @override
@@ -102,7 +102,6 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     // callApis();
     super.initState();
-
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 2000));
     _animation = Tween<double>(
@@ -115,7 +114,6 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
     _controller.forward();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Timer(const Duration(seconds: 2), () => onTimerFinished());
     });
