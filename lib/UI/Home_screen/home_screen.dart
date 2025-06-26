@@ -13,7 +13,6 @@ import 'package:simple/Reusable/color.dart';
 import 'package:simple/Reusable/image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:simple/Reusable/text_styles.dart';
-import 'package:simple/UI/buttomnavigationbar/buttomnavigation.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:simple/ModelClass/Home/getHomeModel.dart';
 
@@ -24,8 +23,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ContactDentalBloc(),
-      child: HomeScreenView(
-      ),
+      child: HomeScreenView(),
     );
   }
 }
@@ -41,14 +39,15 @@ class HomeScreenView extends StatefulWidget {
 
 class HomeScreenViewState extends State<HomeScreenView> {
   GetHomeModel getHomeModel = GetHomeModel();
-  PostReviewModel postReviewModel=PostReviewModel();
+  PostReviewModel postReviewModel = PostReviewModel();
   bool homeLoad = false;
-  int _currentIndex=0;
-  bool reviewLoad=false;
+  int _currentIndex = 0;
+  bool reviewLoad = false;
   String? errorMessage;
   List<String> currentCarouselImages = [];
   final PageController _carouselPageController = PageController();
-  final PageController _testimonialsPageController = PageController(); // New controller for testimonials
+  final PageController _testimonialsPageController =
+      PageController(); // New controller for testimonials
 
   Timer? _carouselTimer;
   Timer? _testimonialsTimer;
@@ -56,7 +55,6 @@ class HomeScreenViewState extends State<HomeScreenView> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _reviewController = TextEditingController();
   int _selectedStars = 5;
-
 
   @override
   void initState() {
@@ -119,9 +117,7 @@ class HomeScreenViewState extends State<HomeScreenView> {
   bool feedLoad = false;
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery
-        .of(context)
-        .size;
+    var size = MediaQuery.of(context).size;
 
     Widget mainContainer() {
       return SingleChildScrollView(
@@ -138,12 +134,12 @@ class HomeScreenViewState extends State<HomeScreenView> {
             ),
             const SizedBox(height: 20),
             TransformingDentalHealthSection(
-                getHomeModel:getHomeModel,
-                homeLoad:homeLoad,
-                backgroundColor:lightBackgroundlight,
-                textColor: textColor,
-                secondaryTextColor:secondaryTextColor,
-                purpleColor:purpleColor,
+              getHomeModel: getHomeModel,
+              homeLoad: homeLoad,
+              backgroundColor: lightBackgroundlight,
+              textColor: textColor,
+              secondaryTextColor: secondaryTextColor,
+              purpleColor: purpleColor,
             ),
             const SizedBox(height: 20),
             buildOurTeamSection(lightBackground, textColor, secondaryTextColor,
@@ -151,122 +147,110 @@ class HomeScreenViewState extends State<HomeScreenView> {
             const SizedBox(height: 40),
             buildShareReviewButton(lightBackground, darkModeBannerColor),
             const SizedBox(height: 40),
-            buildWhatOurClientsSaySection(
-                lightBackground, whiteBackground, textColor,
-                secondaryTextColor),
+            buildWhatOurClientsSaySection(lightBackground, whiteBackground,
+                textColor, secondaryTextColor),
             const SizedBox(height: 20),
           ],
         ),
       );
     }
-    return WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const DashboardScreen()),
-                (route) => false,
-          );
-          return false;// Prevent default back action
-        },
-        child:Scaffold(
-            backgroundColor: scaffoldBackgroundColor,
-            appBar: AppBar(
-              backgroundColor: appBarBackgroundColor,
-              title: Row(
-                children: [
-                  Image.asset(Images.logo1, height: 50, width: 50),
-                  const SizedBox(width: 10),
-                  Text(
-                    'PAUL DENTAL CARE',
-                    style:MyTextStyle.f20(
-                      whiteColor,
-                    ),
-                  ),
-                ],
+
+    return Scaffold(
+      backgroundColor: scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: appBarBackgroundColor,
+        title: Row(
+          children: [
+            Image.asset(Images.logo1, height: 50, width: 50),
+            const SizedBox(width: 10),
+            Text(
+              'PAUL DENTAL CARE',
+              style: MyTextStyle.f20(
+                whiteColor,
               ),
             ),
-
-            body: BlocBuilder<ContactDentalBloc, dynamic>(
-              buildWhen: ((previous, current) {
-                debugPrint("current:$current");
-                if (current is GetHomeModel) {
-                  getHomeModel = current;
-                  if (current.errorResponse != null) {
-                    if (current.errorResponse!.errors != null &&
-                        current.errorResponse!.errors!.isNotEmpty) {
-                      errorMessage = current.errorResponse!.errors![0].message ??
-                          "Something went wrong";
-                    } else {
-                      errorMessage = "Something went wrong";
-                    }
-                    showToast("$errorMessage", context, color: false);
-                    setState(() {
-                      homeLoad = false;
-                    });
-                  } else if (getHomeModel.success == true) {
-                    if (getHomeModel.data?.status == true) {
-                      setState(() {
-                        homeLoad = false;
-                        if (!_hasStartedAutoScrolls) {
-                          _startSlideshowAutoScroll();
-                          _startTestimonialsAutoScroll();
-                          _hasStartedAutoScrolls = true;
-                        }
-                      });
-                    } else if (getHomeModel.data?.status == false) {
-                      debugPrint("getHomeModel:${getHomeModel.message}");
-                      setState(() {
-                        showToast("${getHomeModel.message}", context,
-                            color: false);
-                        homeLoad = false;
-                      });
-                    }
+          ],
+        ),
+      ),
+      body: BlocBuilder<ContactDentalBloc, dynamic>(
+        buildWhen: ((previous, current) {
+          debugPrint("current:$current");
+          if (current is GetHomeModel) {
+            getHomeModel = current;
+            if (current.errorResponse != null) {
+              if (current.errorResponse!.errors != null &&
+                  current.errorResponse!.errors!.isNotEmpty) {
+                errorMessage = current.errorResponse!.errors![0].message ??
+                    "Something went wrong";
+              } else {
+                errorMessage = "Something went wrong";
+              }
+              showToast("$errorMessage", context, color: false);
+              setState(() {
+                homeLoad = false;
+              });
+            } else if (getHomeModel.success == true) {
+              if (getHomeModel.data?.status == true) {
+                setState(() {
+                  homeLoad = false;
+                  if (!_hasStartedAutoScrolls) {
+                    _startSlideshowAutoScroll();
+                    _startTestimonialsAutoScroll();
+                    _hasStartedAutoScrolls = true;
                   }
-                  return true;
-                }
-                if (current is PostReviewModel) {
-                  postReviewModel = current;
-                  if (current.errorResponse != null) {
-                    if (current.errorResponse!.errors != null &&
-                        current.errorResponse!.errors!.isNotEmpty) {
-                      errorMessage = current.errorResponse!.errors![0].message ??
-                          "Something went wrong";
-                    } else {
-                      errorMessage = "Something went wrong";
-                    }
-                    showToast("$errorMessage", context, color: false);
-                    setState(() {
-                      reviewLoad = false;
-                    });
-                  } else if (postReviewModel.status == true)
-                  {
-                        showToast("${postReviewModel.message}", context, color: true);
-                        setState(() {
-                          context.read<ContactDentalBloc>().add(HomeDental());
-                          reviewLoad = false;
-                          homeLoad = false;
-                          Navigator.pop(context);
-                        });
-                  }
-                  else if (postReviewModel.status == false) {
-                    showToast("${postReviewModel.message}", context, color: false);
-                    setState(() {
-                      reviewLoad = false;
-                    });
-                  }
-                  return true;
-                }
-                return false;
-              }),
-              builder: (context, dynamic) {
-                if (homeLoad) {
-                  return const Center(
-                    child: SpinKitChasingDots(color: appPrimaryColor, size: 50), // <--- Your custom loader
-                  );
-                }
-                return mainContainer();
-              },
-            ),
-            )
+                });
+              } else if (getHomeModel.data?.status == false) {
+                debugPrint("getHomeModel:${getHomeModel.message}");
+                setState(() {
+                  showToast("${getHomeModel.message}", context, color: false);
+                  homeLoad = false;
+                });
+              }
+            }
+            return true;
+          }
+          if (current is PostReviewModel) {
+            postReviewModel = current;
+            if (current.errorResponse != null) {
+              if (current.errorResponse!.errors != null &&
+                  current.errorResponse!.errors!.isNotEmpty) {
+                errorMessage = current.errorResponse!.errors![0].message ??
+                    "Something went wrong";
+              } else {
+                errorMessage = "Something went wrong";
+              }
+              showToast("$errorMessage", context, color: false);
+              setState(() {
+                reviewLoad = false;
+              });
+            } else if (postReviewModel.status == true) {
+              showToast("${postReviewModel.message}", context, color: true);
+              setState(() {
+                context.read<ContactDentalBloc>().add(HomeDental());
+                reviewLoad = false;
+                homeLoad = false;
+                Navigator.pop(context);
+              });
+            } else if (postReviewModel.status == false) {
+              showToast("${postReviewModel.message}", context, color: false);
+              setState(() {
+                reviewLoad = false;
+              });
+            }
+            return true;
+          }
+          return false;
+        }),
+        builder: (context, dynamic) {
+          if (homeLoad) {
+            return const Center(
+              child: SpinKitChasingDots(
+                  color: appPrimaryColor, size: 50), // <--- Your custom loader
+            );
+          }
+          return mainContainer();
+        },
+      ),
     );
   }
 
@@ -295,7 +279,6 @@ class HomeScreenViewState extends State<HomeScreenView> {
             ],
           ),
           const SizedBox(height: 16),
-
           Text(
             'Our Team',
             style: TextStyle(
@@ -316,7 +299,6 @@ class HomeScreenViewState extends State<HomeScreenView> {
             ),
           ),
           const SizedBox(height: 32),
-
           LayoutBuilder(
             builder: (context, constraints) {
               final team = getHomeModel.data?.teamMembers ?? [];
@@ -394,11 +376,13 @@ class HomeScreenViewState extends State<HomeScreenView> {
     );
   }
 
-  Widget buildDoctorCard(String imageUrl,
-      String name,
-      String specialization,
-      Color textColor,
-      Color secondaryTextColor,) {
+  Widget buildDoctorCard(
+    String imageUrl,
+    String name,
+    String specialization,
+    Color textColor,
+    Color secondaryTextColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -467,7 +451,7 @@ class HomeScreenViewState extends State<HomeScreenView> {
             borderRadius: BorderRadius.circular(8),
           ),
           minimumSize:
-          const Size(double.infinity, 50), // Make button full width
+              const Size(double.infinity, 50), // Make button full width
         ),
         child: Text(
           'Share Review',
@@ -479,215 +463,210 @@ class HomeScreenViewState extends State<HomeScreenView> {
     );
   }
 
-  void showReviewDialog(BuildContext context, Color dialogFieldFillColor,
-      Color purpleColor) {
-
+  void showReviewDialog(
+      BuildContext context, Color dialogFieldFillColor, Color purpleColor) {
     final _formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
       builder: (BuildContext context2) {
-        return  BlocProvider(
-            create: (context) => ContactDentalBloc(),
-            child: BlocProvider.value(
+        return BlocProvider(
+          create: (context) => ContactDentalBloc(),
+          child: BlocProvider.value(
             value: BlocProvider.of<ContactDentalBloc>(context, listen: false),
-              child: StatefulBuilder(
-                builder: (context, setState)
-                {
-                  return AlertDialog(
-                    contentPadding: EdgeInsets.zero, // Remove default padding
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    backgroundColor: dialogBackgroundColor, // Use dynamic color
-                    content: SingleChildScrollView(
-                      child: Container(
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width *
-                            0.9, // 90% of screen width
-                        padding: const EdgeInsets.all(24.0),
-                        child: Form(
-                          // Wrap with Form for validation
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: IconButton(
-                                  icon: Icon(Icons.cancel,
-                                      color: dialogLabelColor), // Use dynamic color
-                                  onPressed: () {
-                                    Navigator.of(context).pop(); // Close the dialog
-                                  },
-                                ),
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  contentPadding: EdgeInsets.zero, // Remove default padding
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: dialogBackgroundColor, // Use dynamic color
+                  content: SingleChildScrollView(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width *
+                          0.9, // 90% of screen width
+                      padding: const EdgeInsets.all(24.0),
+                      child: Form(
+                        // Wrap with Form for validation
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: Icon(Icons.cancel,
+                                    color:
+                                        dialogLabelColor), // Use dynamic color
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the dialog
+                                },
                               ),
-                              Text(
-                                'Share Review',
-                                style: MyTextStyle.f24(
-                                  dialogTextColor,
-                                ),
+                            ),
+                            Text(
+                              'Share Review',
+                              style: MyTextStyle.f24(
+                                dialogTextColor,
                               ),
-                              const SizedBox(height: 24),
-                              // Full Name Text Field
-                              TextFormField(
-                                controller: _fullNameController,
-                                style: TextStyle(
+                            ),
+                            const SizedBox(height: 24),
+                            // Full Name Text Field
+                            TextFormField(
+                              controller: _fullNameController,
+                              style: TextStyle(
+                                  fontFamily: 'Times New Roman',
+                                  color:
+                                      dialogTextColor), // Text color in field
+                              decoration: InputDecoration(
+                                labelText: 'Full Name*',
+                                labelStyle: TextStyle(
                                     fontFamily: 'Times New Roman',
-                                    color: dialogTextColor
-                                ), // Text color in field
-                                decoration: InputDecoration(
-                                  labelText: 'Full Name*',
-                                  labelStyle: TextStyle(
-                                      fontFamily: 'Times New Roman',
+                                    color: dialogLabelColor),
+                                filled: true,
+                                fillColor: dialogFieldFillColor,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none, // No border
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide:
+                                      BorderSide(color: purpleColor, width: 2),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your full name';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            // Star Rating Dropdown
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color:
+                                    dialogFieldFillColor, // Use dynamic color
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<int>(
+                                  value: _selectedStars,
+                                  isExpanded: true,
+                                  icon: Icon(Icons.keyboard_arrow_down,
                                       color: dialogLabelColor),
-                                  filled: true,
-                                  fillColor:
-                                  dialogFieldFillColor,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none, // No border
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                        color: purpleColor,
-                                        width: 2
-                                    ),
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your full name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                              // Star Rating Dropdown
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: dialogFieldFillColor, // Use dynamic color
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<int>(
-                                    value: _selectedStars,
-                                    isExpanded: true,
-                                    icon: Icon(Icons.keyboard_arrow_down,
-                                        color: dialogLabelColor),
-                                    // Use dynamic color
-                                    onChanged: (int? newValue) {
-                                      if (newValue != null) {
-                                        setState(() {
-                                          _selectedStars = newValue;
-                                        });
-                                      }
-                                    },
-                                    items: List.generate(5, (index) {
-                                      final int starValue = 5 - index;
-                                      return DropdownMenuItem<int>(
-                                        value: starValue,
-                                        child: Row(
-                                          children:
-                                          List.generate(starValue, (starIndex) {
-                                            return const Icon(Icons.star,
-                                                color: Colors.amber, size: 24);
-                                          }),
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                controller: _reviewController,
-                                maxLines: 4,
-                                style: MyTextStyle.f16(
-                                  dialogTextColor,
-                                  weight: FontWeight.normal
-                                ),
-                                decoration: InputDecoration(
-                                  labelText: 'Review',
-                                  labelStyle: MyTextStyle.f20(
-                                    dialogLabelColor,
-                                  ),
                                   // Use dynamic color
-                                  filled: true,
-                                  fillColor:
-                                  dialogFieldFillColor,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none, // No border
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                        color: purpleColor,
-                                        width:
-                                        2),
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your review';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 24),
-                              // Submit Button
-                              Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      purpleColor,
-                                      purpleColor.withOpacity(0.7)
-                                    ], // Purple gradient, now dynamic
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                  ),
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      context.read<ContactDentalBloc>().add(ReviewDental(_fullNameController.text.trim(),_reviewController.text.trim(),_selectedStars.toString()));
-                                      reviewLoad=true;
+                                  onChanged: (int? newValue) {
+                                    if (newValue != null) {
+                                      setState(() {
+                                        _selectedStars = newValue;
+                                      });
                                     }
                                   },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                    padding: const EdgeInsets.symmetric(vertical: 15),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
+                                  items: List.generate(5, (index) {
+                                    final int starValue = 5 - index;
+                                    return DropdownMenuItem<int>(
+                                      value: starValue,
+                                      child: Row(
+                                        children: List.generate(starValue,
+                                            (starIndex) {
+                                          return const Icon(Icons.star,
+                                              color: Colors.amber, size: 24);
+                                        }),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _reviewController,
+                              maxLines: 4,
+                              style: MyTextStyle.f16(dialogTextColor,
+                                  weight: FontWeight.normal),
+                              decoration: InputDecoration(
+                                labelText: 'Review',
+                                labelStyle: MyTextStyle.f20(
+                                  dialogLabelColor,
+                                ),
+                                // Use dynamic color
+                                filled: true,
+                                fillColor: dialogFieldFillColor,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none, // No border
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide:
+                                      BorderSide(color: purpleColor, width: 2),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your review';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                            // Submit Button
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    purpleColor,
+                                    purpleColor.withOpacity(0.7)
+                                  ], // Purple gradient, now dynamic
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    context.read<ContactDentalBloc>().add(
+                                        ReviewDental(
+                                            _fullNameController.text.trim(),
+                                            _reviewController.text.trim(),
+                                            _selectedStars.toString()));
+                                    reviewLoad = true;
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Text(
-                                    'Submit',
-                                    style: MyTextStyle.f18(
-                                      whiteColor,
-                                    ),
+                                ),
+                                child: Text(
+                                  'Submit',
+                                  style: MyTextStyle.f18(
+                                    whiteColor,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  );
-                },
-              ),
-           ),
+                  ),
+                );
+              },
+            ),
+          ),
         );
       },
     );
@@ -714,7 +693,8 @@ class HomeScreenViewState extends State<HomeScreenView> {
           SizedBox(
             height: 200,
             child: PageView.builder(
-              controller: _testimonialsPageController, // Changed to testimonialsPageController
+              controller:
+                  _testimonialsPageController, // Changed to testimonialsPageController
               itemCount: reviews.length,
               itemBuilder: (context, index) {
                 final testimonial = reviews[index];
@@ -764,13 +744,13 @@ class HomeScreenViewState extends State<HomeScreenView> {
       ),
       child: Column(
         mainAxisAlignment:
-        MainAxisAlignment.center, // Center content vertically
+            MainAxisAlignment.center, // Center content vertically
         crossAxisAlignment:
-        CrossAxisAlignment.center, // Center content horizontally
+            CrossAxisAlignment.center, // Center content horizontally
         children: [
           Text(
-            testimonial.name??'nullable',
-            style:MyTextStyle.f18(
+            testimonial.name ?? 'nullable',
+            style: MyTextStyle.f18(
               textColor,
             ),
             textAlign: TextAlign.center,
@@ -790,8 +770,8 @@ class HomeScreenViewState extends State<HomeScreenView> {
           ),
           const SizedBox(height: 8),
           Text(
-            testimonial.review??'null',
-            style:MyTextStyle.f14(
+            testimonial.review ?? 'null',
+            style: MyTextStyle.f14(
               secondaryTextColor,
               fontStyle: FontStyle.italic,
             ),
