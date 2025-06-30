@@ -5,14 +5,7 @@ plugins {
 }
 
 
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-    keystorePropertiesFile.withReader("UTF-8") { reader ->
-        keystoreProperties.load(reader)
-    }
-}
-
+git remote remove origin
 
 android {
     compileSdk = flutter.compileSdkVersion
@@ -30,10 +23,13 @@ android {
 
     defaultConfig {
         applicationId = "com.sentinix.pauldentalcare"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        minSdkVersion 21
+        targetSdkVersion 34
+        compileSdkVersion 34
+
+        versionCode 1
+        versionName "1.0.1"
+        multiDexEnabled true
     }
 
 
